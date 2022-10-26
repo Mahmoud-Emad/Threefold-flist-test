@@ -1,7 +1,13 @@
-FROM ubuntu:20.04
-RUN echo deb http://be.archive.ubuntu.com/ubuntu/ focal main restricted universe multiverse >> /etc/apt/sources.list
-RUN apt-get update && DEBIAN_FRONTEND=noninteractive TZ=Europe/Belgium apt-get install -y openssh-client openssh-server git mc mcedit curl wget dnsutils iproute2 vim && rm -rf /var/lib/apt/lists/*
+FROM ubuntu:22.04
 
-WORKDIR /server_work_dir
-COPY init.sh /server_work_dir
-RUN chmod +x /server_work_dir/init.sh
+RUN apt-get update && \
+  apt-get -y install wget openssh-server python3 python3-pip
+
+RUN wget -O /sbin/zinit https://github.com/threefoldtech/zinit/releases/download/v0.2.5/zinit && \
+  chmod +x /sbin/zinit
+
+COPY zinit /etc/zinit
+COPY start.sh /start.sh
+
+RUN chmod +x /sbin/zinit && chmod +x /start.sh
+ENTRYPOINT  ["zinit", "init"]

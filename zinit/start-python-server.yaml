@@ -1,0 +1,3 @@
+exec: bash -c "python3 -m http.server"
+after:
+  - ssh-init
